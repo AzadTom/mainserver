@@ -3,9 +3,9 @@ import { AppController } from './app.controller';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppService } from './app.service';
-// import { AuthModule } from './auth/auth.module';
-// import { UserModule } from './user/user.module';
-// import { MailModule } from './mail/mail.module';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './user/user.module';
+import { MailModule } from './mail/mail.module';
 import { TenantModule } from './tenant/tenant.module';
 import { TrackerModule } from './tracker/tracker.module';
 
@@ -30,9 +30,9 @@ import { TrackerModule } from './tracker/tracker.module';
         };
       },
     }),
-    // AuthModule,
-    // UserModule,
-    // MailModule,
+    AuthModule,
+    UserModule,
+    MailModule,
     TenantModule,
     TrackerModule,
   ],
