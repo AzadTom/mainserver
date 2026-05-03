@@ -2,30 +2,30 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Tracker } from './entities/tracker.entity';
-import { TrackerPlaylist } from './entities/trackerplaylist.entity';
+import { PlaylistStatus, TrackerPlaylist } from './entities/trackerplaylist.entity';
 
 @Injectable()
 export class TrackerService {
 
   constructor(@InjectRepository(Tracker) private repo: Repository<Tracker>,@InjectRepository(TrackerPlaylist) private playlistRepo: Repository<TrackerPlaylist>) {}
 
-  async findAll() {
+  async getAllListofPlaylists() {
     const list = await this.repo.find();
     return {
       data: list,
     };
   }
 
-  async findOne(id: number) {
+  async getSinglePlaylist(id: number) {
     const playlist = await this.playlistRepo.find({where:{playlistid:id}});
     return{
       data: playlist,
     }
   }
 
-  async remove(id: number) {
-    const isDataExist  = await this.playlistRepo.find({where:{id:id}});
-      if(isDataExist.length > 0){
+  async removeRecordFromSinglePlaylist(id: number) {
+    const isDataExist  = await this.playlistRepo.findOne({where:{id:id}});
+      if(isDataExist){
         await this.playlistRepo.delete({id:id});
         return {
           message: 'Data deleted successfully',
@@ -35,5 +35,15 @@ export class TrackerService {
           message: 'Data not found',
         }
       }
+  }
+
+  async updateStatusofSinglePlaylist(id: number, status: PlaylistStatus) {
+    const isDataExist  = await this.playlistRepo.findOne({where:{id:id}}); 
+    if(isDataExist){
+      await this.playlistRepo.update({id:id}, {status: status});
+      return {
+        message: 'Status updated successfully',
+      }
+    }
   }
 }
