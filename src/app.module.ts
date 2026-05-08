@@ -25,7 +25,7 @@ import { TrackerModule } from './tracker/tracker.module';
           type: 'postgres',
           url: config.get<string>('DATABASE_URL'),
           autoLoadEntities: true,
-          synchronize: true,
+          synchronize: false,
           logging: !isProd,
           ssl: isProd ? { rejectUnauthorized: false } : false,
         };

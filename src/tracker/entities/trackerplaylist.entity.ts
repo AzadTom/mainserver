@@ -23,6 +23,9 @@ export class TrackerPlaylist {
 
   @Column({ type: 'text', name: 'youtube_iframe_url' })
   youtubeIframeUrl: string;
+  
+  @Column({type:'integer',name:'isShortVideo',default:0})
+  isShortVideo:number;
 
   @Column({
     type: 'enum',
