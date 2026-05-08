@@ -9,10 +9,7 @@ import Redis from 'ioredis';
     {
       provide: 'REDIS_CLIENT',
       useFactory: (configService: ConfigService) => {
-        const redisUrl =
-          configService.get<string>('REDIS_URL') ??
-          configService.get<string>('KV_URL');
-
+        const redisUrl = configService.get<string>('REDIS_URL');
         if (redisUrl) {
           return new Redis(redisUrl);
         }
@@ -32,7 +29,6 @@ import Redis from 'ioredis';
       inject: [ConfigService],
     },
   ],
-
   exports: ['REDIS_CLIENT'],
 })
 export class RedisModule {}
