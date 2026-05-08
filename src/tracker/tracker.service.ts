@@ -15,7 +15,7 @@ export class TrackerService {
   ) { }
 
   async getAllListofPlaylists() {
-    const list = await this.repo.find();
+    const list = await this.repo.find({order:{id:'ASC'}});
     return {
       data: list,
     };
