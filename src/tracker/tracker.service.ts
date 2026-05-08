@@ -22,7 +22,7 @@ export class TrackerService {
   }
 
   async getSinglePlaylist(id: number) {
-    const playlist = await this.playlistRepo.find({ where: { playlistid: id } });
+    const playlist = await this.playlistRepo.find({ where: { playlistid: id },order:{id:'ASC'}});
     return {
       data: playlist,
     }
