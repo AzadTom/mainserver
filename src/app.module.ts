@@ -8,7 +8,7 @@ import { UserModule } from './user/user.module';
 import { MailModule } from './mail/mail.module';
 import { TenantModule } from './tenant/tenant.module';
 import { TrackerModule } from './tracker/tracker.module';
-// import { RedisModule } from './redis/redis.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
   imports: [
@@ -36,7 +36,7 @@ import { TrackerModule } from './tracker/tracker.module';
     MailModule,
     TenantModule,
     TrackerModule,
-    // RedisModule,
+    RedisModule,
   ],
   controllers: [AppController],
   providers: [AppService],
