@@ -12,6 +12,11 @@ export class TrackerController {
     return this.trackerService.getAllListofPlaylists();
   }
 
+  @Get('/all')
+  getAllPlaylistVideo(){
+    return this.trackerService.getAllPlaylistVideo();
+  }
+  
   @Get(':id')
   getSinglePlaylist(@Param('id') id: string) {
     return this.trackerService.getSinglePlaylist(+id);

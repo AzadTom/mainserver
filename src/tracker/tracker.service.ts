@@ -58,6 +58,23 @@ export class TrackerService {
     }
   }
 
+  async getAllPlaylistVideo(){
+    const cachedPlaylist = await this.getCachedValue<TrackerPlaylist[]>('allplaylist');
+    if (cachedPlaylist) {
+      return {
+        data: cachedPlaylist,
+        cached: true,
+      };
+    }
+     const allresults = await this.playlistRepo.find({order:{id:'ASC'}});
+     await this.setCachedValue('allplaylist',allresults);
+     return {
+      data: allresults,
+      cached:false,
+     }
+
+  }
+
   async removeRecordFromSinglePlaylist(id: number) {
     const isDataExist = await this.playlistRepo.findOne({ where: { id: id } });
     if (isDataExist) {
