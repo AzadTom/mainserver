@@ -12,7 +12,7 @@ export class TrackerController {
     return this.trackerService.getAllListofPlaylists();
   }
 
-  @Get('/all')
+  @Get('all')
   getAllPlaylistVideo(){
     return this.trackerService.getAllPlaylistVideo();
   }
