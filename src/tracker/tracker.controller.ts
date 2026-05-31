@@ -1,4 +1,4 @@
-import { Controller, Get,Param, Delete, Post, Body } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
 import { TrackerService } from './tracker.service';
 import { PlaylistStatus } from './entities/trackerplaylist.entity';
 
@@ -18,17 +18,20 @@ export class TrackerController {
   }
   
   @Get(':id')
-  getSinglePlaylist(@Param('id') id: string) {
-    return this.trackerService.getSinglePlaylist(+id);
+  getSinglePlaylist(@Param('id', ParseIntPipe) id: number) {
+    return this.trackerService.getSinglePlaylist(id);
   }
 
   @Post(':id/status')
-  updateStatusofSinglePlaylist(@Param('id') id: string, @Body('status') status: PlaylistStatus) {
-    return this.trackerService.updateStatusofSinglePlaylist(+id, status);
+  updateStatusofSinglePlaylist(
+    @Param('id', ParseIntPipe) id: number,
+    @Body('status') status: PlaylistStatus,
+  ) {
+    return this.trackerService.updateStatusofSinglePlaylist(id, status);
   }
 
   @Delete(':id')
-  removeRecordFromSinglePlaylist(@Param('id') id: string) {
-    return this.trackerService.removeRecordFromSinglePlaylist(+id);
+  removeRecordFromSinglePlaylist(@Param('id', ParseIntPipe) id: number) {
+    return this.trackerService.removeRecordFromSinglePlaylist(id);
   }
 }
