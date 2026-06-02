@@ -10,6 +10,8 @@ import { TenantModule } from './tenant/tenant.module';
 import { TrackerModule } from './tracker/tracker.module';
 import { RedisModule } from './redis/redis.module';
 import { BlogsModule } from './blogs/blogs.module';
+import { CloudinaryModule } from './cloudnary/cloudnary.module';
+import { UploadModule } from './upload/upload.module';
 
 @Module({
   imports: [
@@ -39,6 +41,8 @@ import { BlogsModule } from './blogs/blogs.module';
     TrackerModule,
     RedisModule,
     BlogsModule,
+    CloudinaryModule,
+    UploadModule,
   ],
   controllers: [AppController],
   providers: [AppService],
