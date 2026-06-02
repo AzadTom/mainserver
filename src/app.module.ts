@@ -9,6 +9,7 @@ import { MailModule } from './mail/mail.module';
 import { TenantModule } from './tenant/tenant.module';
 import { TrackerModule } from './tracker/tracker.module';
 import { RedisModule } from './redis/redis.module';
+import { BlogsModule } from './blogs/blogs.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { RedisModule } from './redis/redis.module';
     TenantModule,
     TrackerModule,
     RedisModule,
+    BlogsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
