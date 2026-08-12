@@ -12,6 +12,8 @@ import { RedisModule } from './redis/redis.module';
 import { BlogsModule } from './blogs/blogs.module';
 import { CloudinaryModule } from './cloudnary/cloudnary.module';
 import { UploadModule } from './upload/upload.module';
+import { TodosModule } from './todos/todos.module';
+import { TodosModule } from './todos/todos.module';
 
 @Module({
   imports: [
@@ -43,6 +45,7 @@ import { UploadModule } from './upload/upload.module';
     BlogsModule,
     CloudinaryModule,
     UploadModule,
+    TodosModule,
   ],
   controllers: [AppController],
   providers: [AppService],
