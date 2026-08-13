@@ -38,8 +38,17 @@ nest g service name
 pnpm add @prisma/client @prisma/adapter-pg pg
 pnpm add -D prisma
 
+```
 
-pnpm exec prisma init
+```
+pnpm prisma init
+pnpm prisma migrate dev --name init 
+pnpm prisma migrate dev --name todo
+pnpm prisma generate
+pnpm prisma studio
+pnpm prisma db pull
+pnpm prisma migrate status
+
 ```
 
 ## Run tests

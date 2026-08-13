@@ -13,7 +13,8 @@ import { BlogsModule } from './blogs/blogs.module';
 import { CloudinaryModule } from './cloudnary/cloudnary.module';
 import { UploadModule } from './upload/upload.module';
 import { TodosModule } from './todos/todos.module';
-import { TodosModule } from './todos/todos.module';
+import { PrismaModule } from './prisma/prisma.module';
+
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { TodosModule } from './todos/todos.module';
     CloudinaryModule,
     UploadModule,
     TodosModule,
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
