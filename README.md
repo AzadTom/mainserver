@@ -51,6 +51,12 @@ pnpm prisma migrate status
 
 ```
 
+
+## Class -validator
+```
+pnpm add class-validator class-transformer
+```
+
 ## Run tests
 
 ```bash
