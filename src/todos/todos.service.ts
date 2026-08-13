@@ -7,8 +7,14 @@ import { PrismaService } from '../prisma/prisma.service';
 export class TodosService {
 
   constructor(private readonly prisma:PrismaService){}
-  create(createTodoDto: CreateTodoDto) {
-    return 'This action adds a new todo';
+  async create(createTodoDto: CreateTodoDto) {
+    const todo = await this.prisma.todo.create({
+      data: createTodoDto,
+    });
+    return {
+      message: 'Todo created successfully',
+      data: todo,
+    };
   }
 
   async findAll() {
@@ -19,15 +25,38 @@ export class TodosService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} todo`;
+  async findOne(id: number) {
+
+    const todo = await this.prisma.todo.findUnique({
+      where: { id },
+    });
+
+    return {
+      message: 'Todo fetched successfully',
+      data: todo,
+    };
   }
 
-  update(id: number, updateTodoDto: UpdateTodoDto) {
-    return `This action updates a #${id} todo`;
+  async update(id: number, updateTodoDto: UpdateTodoDto) {
+    const todo = await this.prisma.todo.update({
+      where: { id },
+      data: updateTodoDto,
+    });
+
+    return {
+      message: 'Todo updated successfully',
+      data: todo,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} todo`;
+  async remove(id: number) {
+    const todo = await this.prisma.todo.delete({
+      where: { id },
+    });
+
+    return {
+      message: 'Todo deleted successfully',
+      data: todo,
+    };
   }
 }
