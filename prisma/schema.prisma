@@ -17,3 +17,36 @@ model Todo {
   updatedAt DateTime @updatedAt
 }
 
+
+
+
+model Product {
+  id String @id @default(uuid()) @db.Uuid()
+  name String
+  slug String @unique
+  heading String?
+  subheading String?
+  description String?
+  image String 
+  price Decimal 
+  Stock Int @default(0)
+  rating Decimal @default(0) 
+  status ProductStatus @default(ACTIVE)
+  categoryId String @db.Uuid
+  category Category @relation(fields: [categoryId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+  DRAFT
+}
+
+model Category {
+  id       String    @id @default(uuid()) @db.Uuid
+  name     String
+  products Product[]
+}
+

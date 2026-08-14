@@ -14,6 +14,7 @@ import { CloudinaryModule } from './cloudnary/cloudnary.module';
 import { UploadModule } from './upload/upload.module';
 import { TodosModule } from './todos/todos.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { AdminPanelModule } from './admin-panel/admin-panel.module';
 
 
 @Module({
@@ -48,6 +49,7 @@ import { PrismaModule } from './prisma/prisma.module';
     UploadModule,
     TodosModule,
     PrismaModule,
+    AdminPanelModule,
   ],
   controllers: [AppController],
   providers: [AppService],
