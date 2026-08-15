@@ -29,7 +29,7 @@ model Product {
   description String?
   image String 
   price Decimal 
-  Stock Int @default(0)
+  stock Int @default(0)
   rating Decimal @default(0) 
   status ProductStatus @default(ACTIVE)
   categoryId String @db.Uuid
