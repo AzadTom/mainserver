@@ -17,10 +17,10 @@ enum ProductStatus {
 
 export class CreateAdminPanelDto {
   @IsString()
-  name: string;
+  name!: string;
 
   @IsString()
-  slug: string;
+  slug!: string;
 
   @IsOptional()
   @IsString()
@@ -35,11 +35,11 @@ export class CreateAdminPanelDto {
   description?: string;
 
   @IsUrl()
-  image: string;
+  image!: string;
 
   @IsNumber()
   @Min(0)
-  price: number;
+  price!: number;
 
   @IsOptional()
   @IsInt()
@@ -56,5 +56,5 @@ export class CreateAdminPanelDto {
   status?: ProductStatus;
 
   @IsUUID()
-  categoryId: string;
+  categoryId!: string;
 }
