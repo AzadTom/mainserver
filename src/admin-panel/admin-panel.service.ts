@@ -37,6 +37,31 @@ export class AdminPanelService {
     }
   }
 
+  async findAllCategories(){
+    const categories = await this.prisma.category.findMany();
+    return {
+      status: 200,
+      message: 'Categories fetched successfully',
+      data: categories,
+    };
+  }
+
+  async findAllCategorieList(id:string){
+    const categories = await this.prisma.product.findMany({
+      where:{
+        categoryId:id
+      }
+    });
+
+    return {
+      status: 200,
+      message: 'Categories with products fetched successfully',
+      data: categories,
+    };
+  }
+
+
+
   async findOne(id: string): Promise<AdminPanelResponse<Product | null>> {
     const product = await this.prisma.product.findUnique({
       where: { id },
