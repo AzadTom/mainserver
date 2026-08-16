@@ -56,8 +56,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         }
       }
     }),
-    AuthModule,
     UserModule,
+    AuthModule,
     MailModule,
     TenantModule,
     TrackerModule,
