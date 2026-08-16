@@ -10,35 +10,34 @@ import {
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  username: string;
+  username!: string;
 
   @Index({ unique: true })
   @Column()
-  email: string;
+  email!: string;
 
   @Column()
-  password: string;
+  password!: string;
 
   @Column({ name: 'reset_password_token_hash', type: 'varchar', nullable: true })
-  resetPasswordTokenHash: string | null;
+  resetPasswordTokenHash!: string | null;
 
   @Column({ name: 'reset_password_expires_at', type: 'timestamp', nullable: true })
-  resetPasswordExpiresAt: Date | null;
+  resetPasswordExpiresAt!: Date | null;
 
   @Column({ name: 'refreash_token_hash', type: 'varchar', nullable: true })
-  refreshTokenHash: string | null;
+  refreshTokenHash!: string | null;
 
   @Column({ name: 'refreash_token_expires_at', type: 'timestamp', nullable: true })
-  refreashTokenExpiresAt: Date | null;
+  refreashTokenExpiresAt!: Date | null;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
-
+  updatedAt!: Date;
 
 }

@@ -16,7 +16,9 @@ export class AuthService {
         const isFoundUser = await this.userService.findUser(registerDto);
         if (isFoundUser) {
             return {
-                message: 'User already exists'
+                status: 400,
+                message: 'User already exists',
+                data: null
             }
         }
 
@@ -62,11 +64,15 @@ export class AuthService {
                 return { access_token: token, refreash_token: refreash_token_hash };
             }
             return {
-                message: 'Invalid credentials'
+                status: 400,
+                message: 'Invalid credentials',
+                data: null
             }
         }
         return {
-            message: 'Invalid credentials'
+            status: 400,
+            message: 'Invalid credentials',
+            data: null
         }
     }
 

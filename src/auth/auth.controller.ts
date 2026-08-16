@@ -57,11 +57,16 @@ export class AuthController {
                 path: '/'
             });
             return {
-                access_token
+                status: 200,
+                data: { access_token },
+                message: 'User created successfully'
             };
         }
+
         return {
-            message
+            status: 400,
+            message,
+            data: null
         };
     }
 
