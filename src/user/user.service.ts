@@ -9,7 +9,7 @@ import * as crypto from "crypto";
 export class UserService {
 
     constructor(
-        @InjectRepository(User)
+        @InjectRepository(User,'authConnection')
         private readonly userRepository: Repository<User>,
     ) { }
 
