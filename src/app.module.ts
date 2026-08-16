@@ -12,50 +12,13 @@ import { CloudinaryModule } from './cloudnary/cloudnary.module';
 import { UploadModule } from './upload/upload.module';
 import { TodosModule } from './todos/todos.module';
 import { PrismaModule } from './prisma/prisma.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { DatabaseModule } from './database/database.module';
 
 
 
 @Module({
   imports: [
-    ConfigModule.forRoot({
-      envFilePath: '.env',
-      isGlobal: true,
-    }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        const isProd = config.get('NODE_ENV') === 'production';
-        return {
-          type: 'postgres',
-          url: config.get<string>('DATABASE_URL'),
-          autoLoadEntities: true,
-          synchronize: false,
-          logging: !isProd,
-          ssl: isProd ? { rejectUnauthorized: false } : false,
-        };
-      },
-    }),
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        const isProd = config.get('NODE_ENV') === 'production';
-        return {
-          name: 'authConnection',
-          type: 'postgres',
-          url: config.get<string>('AUTH_DATABASE_URL'),
-          autoLoadEntities: true,
-          synchronize: false,
-          logging: !isProd,
-          ssl: isProd
-            ? { rejectUnauthorized: false }
-            : false,
-        }
-      }
-    }),
+    DatabaseModule,
     UserModule,
     AuthModule,
     MailModule,
