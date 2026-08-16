@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Headers, Param, Post, Redirect, Render, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Headers, NotFoundException, Param, Post, Redirect, Render, Req, Res } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { registerDto, resetPasswordDto } from './dto/register.dto';
 import * as crypto from 'crypto';
@@ -17,11 +17,15 @@ export class AuthController {
         const host = req.get('host');
         const protocol = req.protocol;
         const resetLink = `${protocol}://${host}/auth/reset-password/${token}`;
-        await this.authService.saveTokenByUser(token, email);
+        const result = await this.authService.saveTokenByUser(token, email);
+        if (result?.message === 'User not found') {
+            throw new NotFoundException('User not found');
+        }
         await this.mailService.sendResetEmail(
             email,
             resetLink,
         );
+        return { message: 'Reset link sent to email' };
     }
 
     @Get("/reset-password/:token")

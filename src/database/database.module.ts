@@ -7,10 +7,9 @@ import { DatabaseBootstrapService } from './database.bootstrap.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
-        isGlobal: true,
-        envFilePath: '.env',
-      }
-    ),
+      isGlobal: true,
+      envFilePath: '.env',
+    }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -43,7 +42,7 @@ import { DatabaseBootstrapService } from './database.bootstrap.service';
       },
     }),
   ],
-  providers: [DatabaseBootstrapService],
+  // providers: [DatabaseBootstrapService],
   exports: [TypeOrmModule],
 })
 export class DatabaseModule { }

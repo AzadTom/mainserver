@@ -73,7 +73,7 @@ export class UserService {
         const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
         user.resetPasswordTokenHash = tokenHash;
         user.resetPasswordExpiresAt = expiresAt;
-        this.userRepository.save(user);
+        await this.userRepository.save(user);
         return { message: 'Reset token saved successfully' };
     }
 
