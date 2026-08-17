@@ -35,9 +35,6 @@ export class AuthController {
         return { message: 'Reset your password', token };
     }
 
-
-
-
     @Post("/reset-password")
     @Redirect('/auth/success')
     async forget_password(@Body() resetPasswordDto: resetPasswordDto, @Res() res: Response) {
