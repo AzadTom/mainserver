@@ -37,7 +37,7 @@ export class AuthService {
 
         const refreash_token_expires_At = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
         user.refreshTokenHash = refreash_token_hash;
-        user.resetPasswordExpiresAt = refreash_token_expires_At;
+        user.refreshTokenExpiresAt = refreash_token_expires_At;
         this.userService.updateUser(user);
         return { access_token: token, refreash_token: refreash_token_hash };
     }
@@ -60,7 +60,7 @@ export class AuthService {
 
                 const refreash_token_expires_At = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
                 user.refreshTokenHash = refreash_token_hash;
-                user.resetPasswordExpiresAt = refreash_token_expires_At;
+                user.refreshTokenExpiresAt = refreash_token_expires_At;
                 this.userService.updateUser(user);
                 return { access_token: token, refreash_token: refreash_token_hash };
             }
@@ -115,12 +115,14 @@ export class AuthService {
         const user = await this.userService.findUserByRefreashToken(refreash_token);
         if (user) {
             const payload = { sub: user.id };
-            const token = await this.jwtService.signAsync(payload);
-            return { access_token: token };
+            const token = await this.jwtService.signAsync(payload,{expiresIn: '15m'});
+            return { status: 200, data: { access_token: token }, message: 'New access token generated successfully' };
         }
 
         return {
+            status: 400,
             message: 'refreash_token expired',
+            data: null
         }
     }
 
@@ -128,10 +130,12 @@ export class AuthService {
         const user = await this.userService.findUserByRefreashToken(token);
         if (user) {
             user.refreshTokenHash = null;
-            user.resetPasswordExpiresAt = null;
+            user.refreshTokenExpiresAt = null;
             await this.userService.updateUser(user);
         }
         return {
+            status: 200,
+            data: null,
             message: 'User logged out successfully.'
         }
     }
@@ -154,7 +158,7 @@ export class AuthService {
         }
 
         const payload = { sub: user.id };
-        const token = await this.jwtService.signAsync(payload);
+        const token = await this.jwtService.signAsync(payload,{ expiresIn: '15m' });
 
         const refreash_token = crypto.randomBytes(32).toString('hex');
         const refreash_token_hash = crypto
@@ -164,7 +168,7 @@ export class AuthService {
 
         const refreash_token_expires_At = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
         user.refreshTokenHash = refreash_token_hash;
-        user.resetPasswordExpiresAt = refreash_token_expires_At;
+        user.refreshTokenExpiresAt= refreash_token_expires_At;
         await this.userService.updateUser(user);
 
         return { access_token: token, refreash_token: refreash_token_hash };

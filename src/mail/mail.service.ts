@@ -42,9 +42,6 @@ export class MailService {
 
         } catch (error) {
             console.error('Mail send failed:', error);
-            if (error?.code === 'EAUTH') {
-                throw new UnauthorizedException('Email credentials are invalid');
-            }
             throw new InternalServerErrorException('Email could not be sent');
         }
     }
