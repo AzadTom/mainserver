@@ -10,7 +10,11 @@ import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
   imports: [
-    ConfigModule,
+    ConfigModule.forRoot({
+        isGlobal: true,
+        envFilePath: '.env',
+      }
+    ),
     UserModule,
     MailModule,
     PassportModule,
