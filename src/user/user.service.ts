@@ -25,6 +25,8 @@ export class UserService {
             email,
             username,
             password,
+            googleId: registerDto.googleId,
+            social: registerDto.social,
         });
         await this.userRepository.save(user);
         return user;

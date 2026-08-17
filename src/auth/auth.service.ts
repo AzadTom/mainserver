@@ -4,6 +4,7 @@ import { registerDto, resetPasswordDto } from './dto/register.dto';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { JwtService } from '@nestjs/jwt';
+import { AuthProvider } from 'src/user/entities/user.entities';
 
 @Injectable()
 export class AuthService {
@@ -135,5 +136,38 @@ export class AuthService {
         }
     }
 
+    async validateGoogleUser(profile: { googleId: string; email: string; firstName: string; lastName: string }) {
+        let user = await this.userService.findUser({ email: profile.email } as any);
 
+        if (!user) {
+            const tempPassword = crypto.randomBytes(16).toString('hex');
+            const hashed_password = await bcrypt.hash(tempPassword, 10);
+            const username = profile.firstName ? `${profile.firstName}_${profile.lastName || ''}`.trim().replace(/\s+/g, '') : profile.email.split('@')[0];
+
+            user = await this.userService.createUser({
+                username,
+                email: profile.email,
+                password: hashed_password,
+                googleId: profile.googleId,
+                social: AuthProvider.GOOGLE,
+            });
+        }
+
+        const payload = { sub: user.id };
+        const token = await this.jwtService.signAsync(payload);
+
+        const refreash_token = crypto.randomBytes(32).toString('hex');
+        const refreash_token_hash = crypto
+            .createHash('sha256')
+            .update(refreash_token)
+            .digest('hex');
+
+        const refreash_token_expires_At = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+        user.refreshTokenHash = refreash_token_hash;
+        user.resetPasswordExpiresAt = refreash_token_expires_At;
+        await this.userService.updateUser(user);
+
+        return { access_token: token, refreash_token: refreash_token_hash };
+    }
 }
+

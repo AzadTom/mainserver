@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Headers, NotFoundException, Param, Post, Redirect, Render, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, Headers, NotFoundException, Param, Post, Redirect, Render, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { registerDto, resetPasswordDto } from './dto/register.dto';
 import * as crypto from 'crypto';
 import type { Request, Response } from 'express';
 import { MailService } from 'src/mail/mail.service';
+import { GoogleAuthGuard } from './guards/google-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -104,4 +105,36 @@ export class AuthController {
         this.authService.getNewAccessToken(token);
     }
 
+    @Get('google')
+    @UseGuards(GoogleAuthGuard)
+    async googleAuth(@Req() req: Request) { }
+
+    @Get('google/redirect')
+    @UseGuards(GoogleAuthGuard)
+    async googleAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+        const profile = req.user as any;
+        if (!profile) {
+            return {
+                status: 400,
+                message: 'Google authentication failed',
+                data: null,
+            };
+
+        }
+
+        const { access_token, refreash_token } = await this.authService.validateGoogleUser(profile);
+
+        res.cookie('refreash_token', refreash_token, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            path: '/'
+        });
+
+        return {
+            status: 200,
+            data: { access_token },
+            message: 'User logged in via Google successfully'
+        };
+    }
 }
