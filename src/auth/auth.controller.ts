@@ -109,6 +109,7 @@ export class AuthController {
     @Get('google/redirect')
     @UseGuards(GoogleAuthGuard)
     async googleAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+        const productName = req.query.state;
         const profile = req.user as any;
         if (!profile) {
             return {
@@ -119,7 +120,7 @@ export class AuthController {
 
         }
 
-        const { access_token, refreash_token } = await this.authService.validateGoogleUser(profile);
+        const { access_token, refreash_token } = await this.authService.validateGoogleUser({ ...profile, platform: productName });
 
         res.cookie('refreash_token', refreash_token, {
             httpOnly: true,

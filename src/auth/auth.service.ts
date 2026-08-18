@@ -23,7 +23,7 @@ export class AuthService {
             }
         }
 
-        const user = await this.userService.createUser({ ...registerDto, password: hashed_password });
+        const user = await this.userService.createUser({ ...registerDto, password: hashed_password});
         const payload = { sub: user.id };
         const token = await this.jwtService.signAsync(payload, {
             expiresIn: '15m'
@@ -140,7 +140,7 @@ export class AuthService {
         }
     }
 
-    async validateGoogleUser(profile: { googleId: string; email: string; firstName: string; lastName: string }) {
+    async validateGoogleUser(profile: { googleId: string; email: string; firstName: string; lastName: string,platform: string }) {
         let user = await this.userService.findUser({ email: profile.email } as any);
 
         if (!user) {
@@ -154,6 +154,7 @@ export class AuthService {
                 password: hashed_password,
                 googleId: profile.googleId,
                 social: AuthProvider.GOOGLE,
+                productName: profile.platform,
             });
         }
 
