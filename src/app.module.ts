@@ -13,9 +13,6 @@ import { UploadModule } from './upload/upload.module';
 import { TodosModule } from './todos/todos.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { DatabaseModule } from './database/database.module';
-import { ConfigModule } from '@nestjs/config';
-
-
 
 @Module({
   imports: [

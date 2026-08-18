@@ -91,8 +91,14 @@ export class AuthController {
     }
 
     @Post("/signout")
-    async signout(@Req() req: Request) {
+    async signout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
         const token = req.cookies['refreash_token'];
+        res.clearCookie('refreash_token', {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'none',
+            path: '/'
+        });
         this.authService.signout(token);
     }
 
