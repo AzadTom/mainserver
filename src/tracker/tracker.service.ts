@@ -1,9 +1,8 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { Tracker } from './entities/tracker.entity';
 import { PlaylistStatus, TrackerPlaylist } from './entities/trackerplaylist.entity';
 import { Redis } from 'ioredis';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class TrackerService {
@@ -11,11 +10,7 @@ export class TrackerService {
   private readonly singlePlaylistCachePrefix = 'tracker:playlist:';
   private readonly cacheTtlSeconds = 300;
 
-  constructor(
-    @InjectRepository(Tracker) private repo: Repository<Tracker>,
-    @InjectRepository(TrackerPlaylist) private playlistRepo: Repository<TrackerPlaylist>,
-    @Inject('REDIS_CLIENT') private readonly redisClient: Redis,
-  ) {}
+  constructor(private readonly prisma: PrismaService, @Inject('REDIS_CLIENT') private readonly redisClient: Redis) { }
 
   async getAllListofPlaylists() {
     const cachedList = await this.getCachedValue<Tracker[]>(
@@ -29,7 +24,7 @@ export class TrackerService {
       };
     }
 
-    const list = await this.repo.find({order:{id:'ASC'}});
+    const list = await this.prisma.tracker.findMany({ orderBy: { id: 'desc' } });
     await this.setCachedValue(this.allPlaylistsCacheKey, list);
 
     return {
@@ -49,7 +44,7 @@ export class TrackerService {
       };
     }
 
-    const playlist = await this.playlistRepo.find({ where: { playlistid: id },order:{id:'ASC'}});
+    const playlist = await this.prisma.trackerPlaylist.findMany({ where: { playlistid: id }, orderBy: { id: 'desc' } });
     await this.setCachedValue(cacheKey, playlist);
 
     return {
@@ -58,7 +53,7 @@ export class TrackerService {
     }
   }
 
-  async getAllPlaylistVideo(){
+  async getAllPlaylistVideo() {
     const cachedPlaylist = await this.getCachedValue<TrackerPlaylist[]>('allplaylist');
     if (cachedPlaylist) {
       return {
@@ -66,19 +61,19 @@ export class TrackerService {
         cached: true,
       };
     }
-     const allresults = await this.playlistRepo.find({order:{id:'ASC'}});
-     await this.setCachedValue('allplaylist',allresults);
-     return {
+    const allresults = await this.prisma.trackerPlaylist.findMany({ orderBy: { id: 'desc' } });
+    await this.setCachedValue('allplaylist', allresults);
+    return {
       data: allresults,
-      cached:false,
-     }
+      cached: false,
+    }
 
   }
 
   async removeRecordFromSinglePlaylist(id: number) {
-    const isDataExist = await this.playlistRepo.findOne({ where: { id: id } });
+    const isDataExist = await this.prisma.trackerPlaylist.findUnique({ where: { id: id } });
     if (isDataExist) {
-      await this.playlistRepo.delete({ id: id });
+      await this.prisma.trackerPlaylist.delete({ where: { id: id } });
       await this.invalidatePlaylistCache(id);
       return {
         message: 'Data deleted successfully',
@@ -91,9 +86,16 @@ export class TrackerService {
   }
 
   async updateStatusofSinglePlaylist(id: number, status: PlaylistStatus) {
-    const isDataExist = await this.playlistRepo.findOne({ where: { id: id } });
+    const isDataExist = await this.prisma.trackerPlaylist.findUnique({ where: { id: id } });
     if (isDataExist) {
-      await this.playlistRepo.update({ id: id }, { status: status });
+      await this.prisma.trackerPlaylist.update({
+        where: {
+          id,
+        },
+        data: {
+          status,
+        },
+      });
       await this.invalidatePlaylistCache(id);
       return {
         message: 'Status updated successfully',

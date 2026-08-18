@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { CreateBlogDto } from './dto/create-blog.dto';
 import { UpdateBlogDto } from './dto/update-blog.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Blog } from './entities/blog.entity';
-import { Repository } from 'typeorm';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class BlogsService {
 
-  constructor(@InjectRepository(Blog) private readonly blogRepository: Repository<Blog>) { }
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(createBlogDto: CreateBlogDto) {
-    const blog = this.blogRepository.create(createBlogDto);
-    const result = await this.blogRepository.save(blog);
+    const result = await this.prisma.blog.create({
+      data: createBlogDto
+    });
+
     return {
       data: result,
       message: 'Blog created successfully',
@@ -20,7 +20,7 @@ export class BlogsService {
   }
 
   async findAll() {
-    const blogslist = await this.blogRepository.find();
+    const blogslist = await this.prisma.blog.findMany();
 
     if (blogslist.length === 0) {
       return {
@@ -36,7 +36,11 @@ export class BlogsService {
   }
 
   async findOne(id: string) {
-    const blog = await this.blogRepository.findOne({ where: { id } });
+    const blog = await this.prisma.blog.findUnique({
+      where: {
+        id
+      }
+    });
     return {
       data: blog,
       message: 'Blog retrieved successfully',
@@ -44,26 +48,28 @@ export class BlogsService {
   }
 
   async update(id: string, updateBlogDto: UpdateBlogDto) {
-    const blog = await this.blogRepository.findOne({ where: { id } });
-    if (blog) {
-      Object.assign(blog, updateBlogDto);
-      const result = await this.blogRepository.save(blog);
-      return {
-        data: result,
-        message: 'Blog updated successfully',
-      };
+    const blog = await this.prisma.blog.update({
+      where: {
+        id
+      },
+      data:updateBlogDto
+    });
+    return {
+      data: blog,
+      message: 'Blog updated successfully',
     }
 
   }
 
   async remove(id: string) {
-    const blog = await this.blogRepository.findOne({ where: { id } });
-    if (blog) {
-      const result = await this.blogRepository.remove(blog);
-      return {
-        data: result,
+    const blog = await this.prisma.blog.delete({
+      where: {
+        id
+      }
+    });
+    return {
+        data: blog,
         message: 'Blog removed successfully',
       };
     }
-  }
 }

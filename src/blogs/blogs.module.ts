@@ -3,9 +3,10 @@ import { BlogsService } from './blogs.service';
 import { BlogsController } from './blogs.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Blog } from './entities/blog.entity';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
-  imports:[TypeOrmModule.forFeature([Blog])],
+  imports:[PrismaModule],
   controllers: [BlogsController],
   providers: [BlogsService],
 })

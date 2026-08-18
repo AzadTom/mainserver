@@ -47,7 +47,7 @@ model Blog {
   excerpt     String
   content     Json
   status      BlogStatus @default(DRAFT)
-  publishedAt DateTime?  @map("published_at")
+  publishedAt DateTime  @default(now()) @map("published_at") 
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -61,4 +61,6 @@ model Todo {
   completed Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@map("todos")
 }

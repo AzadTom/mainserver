@@ -1,13 +1,13 @@
 enum BlogStatus {
-  DRAFT = 'draft',
-  PUBLISHED = 'published',
+  DRAFT = 'DRAFT',
+  PUBLISHED = 'PUBLISHED',
 }
 
 export class CreateBlogDto {
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: Record<string, any>;
+  title!: string;
+  slug!: string;
+  excerpt!: string;
+  content!: Record<string, any>;
   status?: BlogStatus;
   publishedAt?: Date;
 }

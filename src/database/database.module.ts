@@ -11,21 +11,6 @@ import { DatabaseBootstrapService } from './database.bootstrap.service';
       envFilePath: '.env',
     }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (config: ConfigService) => {
-        const isProd = config.get('NODE_ENV') === 'production';
-        return {
-          type: 'postgres',
-          url: config.get<string>('DATABASE_URL'),
-          autoLoadEntities: true,
-          synchronize: false,
-          logging: !isProd,
-          ssl: isProd ? { rejectUnauthorized: false } : false,
-        };
-      },
-    }),
-    TypeOrmModule.forRootAsync({
       name: 'authConnection',
       imports: [ConfigModule],
       inject: [ConfigService],
