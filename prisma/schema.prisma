@@ -5,7 +5,7 @@ generator client {
   moduleFormat = "cjs"
 }
 
-datasource db {
+datasource neondb {
   provider = "postgresql"
 }
 
