@@ -5,8 +5,54 @@ generator client {
   moduleFormat = "cjs"
 }
 
-datasource neondb {
+datasource db {
   provider = "postgresql"
+}
+
+enum PlaylistStatus {
+  IDLE       @map("idle")
+  INPROGRESS @map("inprogress")
+  DONE       @map("done")
+}
+
+model TrackerPlaylist {
+  id               Int            @id @default(autoincrement())
+  playlistid       Int
+  youtubeIframeUrl String         @map("youtube_iframe_url") @db.Text
+  isShortVideo     Int            @default(0) @map("isShortVideo")
+  status           PlaylistStatus @default(IDLE)
+  tracker          Tracker        @relation(fields: [playlistid],references: [id],onDelete: Cascade)
+  @@map("trackersplaylist")
+}
+model Tracker {
+  id          Int              @id @default(autoincrement())
+  title       String           @db.Text
+  description String           @db.Text
+  imageUrl    String           @db.Text
+  playlists   TrackerPlaylist[]
+  @@map("trackers")
+}
+
+
+
+enum BlogStatus {
+  DRAFT     @map("draft")
+  PUBLISHED @map("published")
+}
+
+model Blog {
+  id          String     @id @default(uuid()) @db.Uuid()
+  title       String
+  slug        String     @unique
+  excerpt     String
+  content     Json
+  status      BlogStatus @default(DRAFT)
+  publishedAt DateTime?  @map("published_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("blogs")
 }
 
 model Todo {
