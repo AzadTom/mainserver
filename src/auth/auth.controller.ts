@@ -1,11 +1,10 @@
-import { Body, Controller, Get, Headers, NotFoundException, Param, Post, Redirect, Render, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, NotFoundException, Param, Post, Redirect, Render, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { registerDto, resetPasswordDto } from './dto/register.dto';
 import * as crypto from 'crypto';
 import type { Request, Response } from 'express';
 import { MailService } from 'src/mail/mail.service';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
-import { strict } from 'assert';
 
 @Controller('auth')
 export class AuthController {
@@ -59,18 +58,18 @@ export class AuthController {
                 sameSite: 'none',
                 path: '/'
             });
-            return {
+            return res.status(200).json({
                 status: 200,
                 data: { access_token },
                 message: 'User created successfully'
-            };
+            });
         }
 
-        return {
+        return res.status(400).json({
             status: 400,
             message,
             data: null
-        };
+        });
     }
 
     @Post("/signin")
@@ -84,13 +83,13 @@ export class AuthController {
                 sameSite: 'none',
                 path: '/'
             });
-            return {
+            return res.status(200).json({
                 status: 200,
                 data: { access_token },
                 message: "User LoggedIn successfully",
-            };
+            });
         }
-        return { status: 400, message, data: null };
+        return res.status(400).json({ status: 400, message, data: null });
     }
 
     @Post("/signout")
@@ -102,7 +101,12 @@ export class AuthController {
             sameSite: 'none',
             path: '/'
         });
-        this.authService.signout(token);
+        const { data, message } = await this.authService.signout(token);
+        return res.status(200).json({
+            status: 200,
+            data,
+            message,
+        });
     }
 
     @Get("/user/me")
@@ -111,16 +115,21 @@ export class AuthController {
         const response = await this.authService.getUserInfo(user_id);
         return res.status(200).json({
             status: 200,
-            data:{...response},
+            data: { ...response },
             message: 'userInfo fetch successFully!',
         });
 
     }
 
     @Get("/refresh-token")
-    async refreashToken(@Req() req: Request) {
+    async refreashToken(@Req() req: Request, @Res() res: Response) {
         const token = req.cookies['refreash_token'];
-        this.authService.getNewAccessToken(token);
+        const { data, message } = await this.authService.getNewAccessToken(token);
+        return res.status(200).json({
+            status: 200,
+            data: data,
+            message: message,
+        });
     }
 
     @Get('google')
@@ -133,12 +142,11 @@ export class AuthController {
         const productName = req.query.state;
         const profile = req.user as any;
         if (!profile) {
-            return {
+            return res.status(400).json({
                 status: 400,
                 message: 'Google authentication failed',
                 data: null,
-            };
-
+            });
         }
 
         const { access_token, refreash_token } = await this.authService.validateGoogleUser({ ...profile, platform: productName });
@@ -150,11 +158,9 @@ export class AuthController {
             path: '/'
         });
 
-        return res.redirect("http://localhost:5173/");
-        // return {
-        //     status: 200,
-        //     data: { access_token },
-        //     message: 'User logged in via Google successfully'
-        // };
+        const LIVE = "https://foodlux.netlify.app";
+        const LOCAL = "http://localhost:5173";
+        const URL = LOCAL;
+        return res.redirect(`${URL}?token=${access_token}`);
     }
 }
