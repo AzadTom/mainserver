@@ -25,9 +25,7 @@ export class AuthService {
 
         const user = await this.userService.createUser({ ...registerDto, password: hashed_password,productName: registerDto.productName });
         const payload = { sub: user.id };
-        const token = await this.jwtService.signAsync(payload, {
-            expiresIn: '15m'
-        });
+        const token = await this.jwtService.signAsync(payload);
 
         const refreash_token = crypto.randomBytes(32).toString('hex');
         const refreash_token_hash = crypto
@@ -75,6 +73,10 @@ export class AuthService {
             message: 'Invalid credentials',
             data: null
         }
+    }
+
+    async getUserInfo(user_id:string){
+        return await this.userService.findUserById(user_id);
     }
 
     async saveTokenByUser(token: string, email: string) {
@@ -159,7 +161,7 @@ export class AuthService {
         }
 
         const payload = { sub: user.id };
-        const token = await this.jwtService.signAsync(payload,{ expiresIn: '15m' });
+        const token = await this.jwtService.signAsync(payload);
 
         const refreash_token = crypto.randomBytes(32).toString('hex');
         const refreash_token_hash = crypto

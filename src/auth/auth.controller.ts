@@ -5,6 +5,7 @@ import * as crypto from 'crypto';
 import type { Request, Response } from 'express';
 import { MailService } from 'src/mail/mail.service';
 import { GoogleAuthGuard } from './guards/google-auth.guard';
+import { strict } from 'assert';
 
 @Controller('auth')
 export class AuthController {
@@ -104,6 +105,18 @@ export class AuthController {
         this.authService.signout(token);
     }
 
+    @Get("/user/me")
+    async getUserInfo(@Req() req: Request, @Res() res: Response) {
+        const user_id = String(req['userInfo'].sub);
+        const response = await this.authService.getUserInfo(user_id);
+        return res.status(200).json({
+            status: 200,
+            data:{...response},
+            message: 'userInfo fetch successFully!',
+        });
+
+    }
+
     @Get("/refresh-token")
     async refreashToken(@Req() req: Request) {
         const token = req.cookies['refreash_token'];
@@ -137,10 +150,11 @@ export class AuthController {
             path: '/'
         });
 
-        return {
-            status: 200,
-            data: { access_token },
-            message: 'User logged in via Google successfully'
-        };
+        return res.redirect("http://localhost:5173/");
+        // return {
+        //     status: 200,
+        //     data: { access_token },
+        //     message: 'User logged in via Google successfully'
+        // };
     }
 }

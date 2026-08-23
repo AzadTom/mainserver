@@ -38,6 +38,11 @@ export class UserService {
         return user;
     }
 
+     findUserById = async (user_id:string) => {
+        const user = await this.userRepository.findOne({ where: { id:user_id} });
+        return user;
+    }
+
     findUserByToken = async (tokenHash: string) => {
 
         const user = await this.userRepository.findOne({
