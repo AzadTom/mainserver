@@ -11,8 +11,10 @@ export class GoogleAuthGuard extends AuthGuard('google') {
             origin?.includes('localhost');
 
         return {
-            state: request.query.product,
-            origin: isLocalhost ? 'local' : 'production',
+            state: JSON.stringify({
+                product: request.query.product,
+                environment: isLocalhost ? 'local' : 'production',
+            }),
         };
     }
 }

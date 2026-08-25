@@ -139,7 +139,9 @@ export class AuthController {
     @Get('google/redirect')
     @UseGuards(GoogleAuthGuard)
     async googleAuthRedirect(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-        const productName = req.query.state;
+        const state = JSON.parse(req.query.state as string);
+        const productName = state.product;
+        const environment = state.environment;
         const profile = req.user as any;
         if (!profile) {
             return res.status(400).json({
@@ -158,10 +160,9 @@ export class AuthController {
             path: '/'
         });
 
-        const state = req.query.origin;
         const LIVE = "https://foodlux.netlify.app";
         const LOCAL = "http://localhost:5173";
-        const URL = state === "local" ? LOCAL : LIVE;
+        const URL = environment === "local" ? LOCAL : LIVE;
         return res.redirect(`${URL}?token=${access_token}`);
     }
 }
