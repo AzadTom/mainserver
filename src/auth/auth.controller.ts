@@ -162,7 +162,9 @@ export class AuthController {
 
         const LIVE = "https://foodlux.netlify.app";
         const LOCAL = "http://localhost:5173";
+        console.log("url",environment);
         const URL = environment === "local" ? LOCAL : LIVE;
+        console.log("url",URL);
         return res.redirect(`${URL}?token=${access_token}`);
     }
 }
