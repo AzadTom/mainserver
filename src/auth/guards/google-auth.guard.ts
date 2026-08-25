@@ -5,9 +5,14 @@ import { AuthGuard } from '@nestjs/passport';
 export class GoogleAuthGuard extends AuthGuard('google') {
     getAuthenticateOptions(context: ExecutionContext) {
         const request = context.switchToHttp().getRequest();
+        const origin = request.headers.origin;
+
+        const isLocalhost =
+            origin?.includes('localhost');
 
         return {
             state: request.query.product,
+            origin: isLocalhost ? 'local' : 'production',
         };
     }
 }
