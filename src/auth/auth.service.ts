@@ -23,7 +23,7 @@ export class AuthService {
             }
         }
 
-        const user = await this.userService.createUser({ ...registerDto, password: hashed_password,productName: registerDto.productName });
+        const user = await this.userService.createUser({ ...registerDto, password: hashed_password, productName: registerDto.productName });
         const payload = { sub: user.id };
         const token = await this.jwtService.signAsync(payload);
 
@@ -75,7 +75,7 @@ export class AuthService {
         }
     }
 
-    async getUserInfo(user_id:string){
+    async getUserInfo(user_id: string) {
         return await this.userService.findUserById(user_id);
     }
 
@@ -117,12 +117,12 @@ export class AuthService {
         const user = await this.userService.findUserByRefreashToken(refreash_token);
         if (user) {
             const payload = { sub: user.id };
-            const token = await this.jwtService.signAsync(payload,{expiresIn: '15m'});
+            const token = await this.jwtService.signAsync(payload);
             return { status: 200, data: { access_token: token }, message: 'New access token generated successfully' };
         }
 
         return {
-            status: 400,
+            status: 401,
             message: 'refreash_token expired',
             data: null
         }
@@ -134,15 +134,20 @@ export class AuthService {
             user.refreshTokenHash = null;
             user.refreshTokenExpiresAt = null;
             await this.userService.updateUser(user);
+            return {
+                status: 200,
+                data: null,
+                message: 'User logged out successfully.'
+            }
         }
         return {
-            status: 200,
+            status: 400,
             data: null,
-            message: 'User logged out successfully.'
+            message: 'User not logged out successfully.'
         }
     }
 
-    async validateGoogleUser(profile: { googleId: string; email: string; firstName: string; lastName: string,platform: string }) {
+    async validateGoogleUser(profile: { googleId: string; email: string; firstName: string; lastName: string, platform: string }) {
         let user = await this.userService.findUser({ email: profile.email } as any);
 
         if (!user) {
@@ -171,7 +176,7 @@ export class AuthService {
 
         const refreash_token_expires_At = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
         user.refreshTokenHash = refreash_token_hash;
-        user.refreshTokenExpiresAt= refreash_token_expires_At;
+        user.refreshTokenExpiresAt = refreash_token_expires_At;
         await this.userService.updateUser(user);
 
         return { access_token: token, refreash_token: refreash_token_hash };

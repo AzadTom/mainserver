@@ -81,7 +81,7 @@ export class AuthController {
                 httpOnly: true,
                 secure: true,
                 sameSite: 'none',
-                path: '/'
+                path: '/',
             });
             return res.status(200).json({
                 status: 200,
@@ -101,9 +101,9 @@ export class AuthController {
             sameSite: 'none',
             path: '/'
         });
-        const { data, message } = await this.authService.signout(token);
-        return res.status(200).json({
-            status: 200,
+        const { status, data, message } = await this.authService.signout(token);
+        return res.status(status).json({
+            status: status,
             data,
             message,
         });
@@ -124,9 +124,9 @@ export class AuthController {
     @Get("/refresh-token")
     async refreashToken(@Req() req: Request, @Res() res: Response) {
         const token = req.cookies['refreash_token'];
-        const { data, message } = await this.authService.getNewAccessToken(token);
-        return res.status(200).json({
-            status: 200,
+        const { status, data, message } = await this.authService.getNewAccessToken(token);
+        return res.status(status).json({
+            status: status,
             data: data,
             message: message,
         });
@@ -160,11 +160,11 @@ export class AuthController {
             path: '/'
         });
 
-        const LIVE = "https://foodlux.netlify.app";
+        const LIVE = "https://foodlux2.netlify.app";
         const LOCAL = "http://localhost:5173";
-        console.log("url",environment);
+        console.log("url", environment);
         const URL = environment === "local" ? LOCAL : LIVE;
-        console.log("url",URL);
+        console.log("url", URL);
         return res.redirect(`${URL}?token=${access_token}`);
     }
 }

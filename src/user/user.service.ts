@@ -59,7 +59,7 @@ export class UserService {
         const user = await this.userRepository.findOne({
             where: {
                 refreshTokenHash: tokenHash,
-                resetPasswordExpiresAt: MoreThan(new Date()),
+                refreshTokenExpiresAt: MoreThan(new Date()),
             },
         });
         return user;
