@@ -36,7 +36,7 @@ export class AuthService {
         const refreash_token_expires_At = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
         user.refreshTokenHash = refreash_token_hash;
         user.refreshTokenExpiresAt = refreash_token_expires_At;
-        this.userService.updateUser(user);
+        await this.userService.updateUser(user);
         return { access_token: token, refreash_token: refreash_token_hash };
     }
 
@@ -59,7 +59,7 @@ export class AuthService {
                 const refreash_token_expires_At = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
                 user.refreshTokenHash = refreash_token_hash;
                 user.refreshTokenExpiresAt = refreash_token_expires_At;
-                this.userService.updateUser(user);
+                await this.userService.updateUser(user);
                 return { access_token: token, refreash_token: refreash_token_hash };
             }
             return {
