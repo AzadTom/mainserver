@@ -19,7 +19,8 @@ export const ColumnMapping = {
     payment3_payment: "payment3_amount",
     move_in_date:"move_in_date",
     move_out_date:"move_out_date",
-    rent_cycle_date:"rent_cycle_date"
+    rent_cycle_date:"rent_cycle_date",
+    initial_bijli_unit:"initial_bijli_unit"
 }
 
 export interface IUserInfo {

@@ -78,6 +78,7 @@ export class TenantService {
                 moveInDate: getValue(ColumnMapping.move_in_date),
                 moveOutDate: getValue(ColumnMapping.move_out_date),
                 rentCycleDate: getValue(ColumnMapping.rent_cycle_date),
+                initialBijliUnit: getValue(ColumnMapping.initial_bijli_unit),
             });
         }
         return { list: list };
@@ -119,6 +120,7 @@ export class TenantService {
             move_in_date: toString(row[getIndex(ColumnMapping.move_in_date)]),
             move_out_date: toString(row[getIndex(ColumnMapping.move_out_date)]),
             rent_cycle_date: toString(row[getIndex(ColumnMapping.rent_cycle_date)]),
+            initial_bijli_unit: toNumber(row[getIndex(ColumnMapping.initial_bijli_unit)]),
         }));
 
         return { list: result };
