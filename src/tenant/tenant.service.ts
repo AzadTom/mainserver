@@ -30,23 +30,56 @@ export class TenantService {
     }
 
     private async getSheetTitleById(sheetid: string) {
-        const result = await this.getTenantList();
-        const sheet = result.list?.find((item) => Number(item.id) === Number(sheetid));
-        return sheet?.name;
+        await this.ready();
+        const result = await this.sheets.spreadsheets.get({
+            spreadsheetId: this.spreadsheetId,
+            fields: 'sheets.properties',
+        });
+        const sheet = result.data.sheets?.find(
+            (item) => String(item.properties?.sheetId) === String(sheetid),
+        );
+        return sheet?.properties?.title;
     }
 
 
     async getTenantList() {
-
         await this.ready();
         const res = await this.sheets.spreadsheets.get({
             spreadsheetId: this.spreadsheetId,
             fields: "sheets.properties",
         });
-        const list = res.data.sheets?.map((s) => ({
-            name: s.properties?.title,
-            id: s.properties?.sheetId,
-        }));
+
+        const list: any[] = [];
+
+        for (const sheet of res.data.sheets ?? []) {
+            const sheetId = sheet.properties?.sheetId;
+            const sheetTitle = sheet.properties?.title;
+            if (sheetId === undefined || !sheetTitle) continue;
+
+            const result = await this.sheets.spreadsheets.values.get({
+                spreadsheetId: this.spreadsheetId,
+                range: `${sheetTitle}!A1:Z1000`,
+            });
+
+            const rows = result.data.values;
+            if (!rows || rows.length < 2) continue;
+
+            const headers = rows[0];
+            const firstDataRow = rows.slice(1).find((row) => row.some((cell) => cell !== ''));
+            if (!firstDataRow) continue;
+            const getValue = (key: string) => {
+                const index = headers.indexOf(key);
+                return index === -1 ? '' : firstDataRow[index] ?? '';
+            };
+
+            list.push({
+                id: String(sheetId),
+                name: sheetTitle,
+                moveInDate: getValue(ColumnMapping.move_in_date),
+                moveOutDate: getValue(ColumnMapping.move_out_date),
+                rentCycleDate: getValue(ColumnMapping.rent_cycle_date),
+            });
+        }
         return { list: list };
     }
 
@@ -83,6 +116,9 @@ export class TenantService {
             payment2_payment: toNumber(row[getIndex(ColumnMapping.payment2_payment)]),
             payment3_date: toString(row[getIndex(ColumnMapping.payment3_date)]),
             payment3_payment: toNumber(row[getIndex(ColumnMapping.payment3_payment)]),
+            move_in_date: toString(row[getIndex(ColumnMapping.move_in_date)]),
+            move_out_date: toString(row[getIndex(ColumnMapping.move_out_date)]),
+            rent_cycle_date: toString(row[getIndex(ColumnMapping.rent_cycle_date)]),
         }));
 
         return { list: result };
@@ -197,7 +233,7 @@ export class TenantService {
             throw new Error('payment_number must be 1, 2, or 3');
         }
 
-        const sheetTitle = await  this.getSheetTitleById(sheetid);
+        const sheetTitle = await this.getSheetTitleById(sheetid);
         const res = await this.sheets.spreadsheets.values.get({
             spreadsheetId: this.spreadsheetId,
             range: `${sheetTitle}!A1:Z1000`,
@@ -219,7 +255,7 @@ export class TenantService {
             return { message: 'No record found with this serial' };
         }
 
-     
+
         const dateKey = `payment${payment_number}_date` as keyof typeof ColumnMapping;
         const amountKey = `payment${payment_number}_payment` as keyof typeof ColumnMapping;
 
