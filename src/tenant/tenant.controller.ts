@@ -13,11 +13,25 @@ export class TenantController {
         return result;
     }
 
+    @Get("/list/todo")
+    async getTodoContent(){
+       const result = await this.service.getToDoContent();
+       return result; 
+    }
+
+    @Post("/list/todo")
+    async insertContentInTodo(@Body("payload") payload: string) {
+        const result = await this.service.insertContentInTodo(payload);
+        return result;
+    }
+
     @Get("/list/:id")
     async getDetailById(@Param("id") id: string) {
         const result = await this.service.getDetailById(id);
         return result;
     }
+
+    
 
     @Post("/add_new_record")
     async addOrUpdateR(@Body() payload: SheetPayloadForRecordDto) {

@@ -55,6 +55,7 @@ export class TenantService {
             const sheetId = sheet.properties?.sheetId;
             const sheetTitle = sheet.properties?.title;
             if (sheetId === undefined || !sheetTitle) continue;
+            if (sheetTitle === 'todo') continue;
 
             const result = await this.sheets.spreadsheets.values.get({
                 spreadsheetId: this.spreadsheetId,
@@ -82,6 +83,36 @@ export class TenantService {
             });
         }
         return { list: list };
+    }
+
+    async getToDoContent() {
+        await this.ready();
+        const sheetTitle = "todo";
+        const res = await this.sheets.spreadsheets.values.get({
+            spreadsheetId: this.spreadsheetId,
+            range: `${sheetTitle}!A1:A1`
+        });
+        const rows = res.data.values;
+        if (!rows || rows.length === 0) return { content: '' };
+        const content = rows[0][0];
+        return {
+            content
+        };
+    }
+
+    async insertContentInTodo(payload: string) {
+        await this.ready();
+        const sheetTitle = "todo";
+
+        console.log("Inserting content into todo:", payload);
+        await this.sheets.spreadsheets.values.update({
+            spreadsheetId: this.spreadsheetId,
+            range: `${sheetTitle}!A1:A1`,
+            valueInputOption: "USER_ENTERED",
+            requestBody: { values: [[payload]] }
+        });
+
+        return { message: 'Todo content updated successfully' };
     }
 
     async getDetailById(sheetid: string) {
